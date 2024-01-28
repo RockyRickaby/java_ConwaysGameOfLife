@@ -1,6 +1,7 @@
 public class GameOfLife {
     private byte[][] gameGrid;
     private int rows, cols;
+    private int updated;
 
     public GameOfLife(int m, int n) {
         if (m < 0) {
@@ -12,6 +13,7 @@ public class GameOfLife {
         this.rows = m;
         this.cols = n;
         this.gameGrid = new byte[m][n];
+        this.updated = -1;
     }
 
     public int toggle(int i, int j) {
@@ -52,14 +54,17 @@ public class GameOfLife {
 
     public void tick() {
         byte[][] nextGen = new byte[this.rows][this.cols];
+        updated = 0;
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 byte currCell = gameGrid[i][j];
                 int count = numberOfLiveNeighborsOf(i, j);
                 if (currCell == 1 && (count < 2 || count > 3)) {
                     nextGen[i][j] = 0;
+                    updated = 1;
                 } else if (currCell == 0 && count == 3) {
                     nextGen[i][j] = 1;
+                    updated = 1;
                 } else {
                     nextGen[i][j] = currCell;
                 }
@@ -68,6 +73,16 @@ public class GameOfLife {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 gameGrid[i][j] = nextGen[i][j];
+            }
+        }
+    }
+
+    public int updated() { return this.updated; }
+
+    public void reset() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                gameGrid[i][j] = 0;
             }
         }
     }
