@@ -34,7 +34,7 @@ public class GameOfLife {
     public int getM() { return this.rows; }
     public int getN() { return this.cols; }
 
-    public boolean validIndex(int i, int j) {
+    private boolean validIndex(int i, int j) {
         return (i >= 0 && i < this.rows) && (j >= 0 && j < this.cols);
     }
 

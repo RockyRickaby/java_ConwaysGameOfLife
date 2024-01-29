@@ -1,8 +1,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
@@ -17,52 +17,30 @@ import javax.swing.Timer;
 
 
 public class Canvas extends JFrame {
-    private int oldX, oldY;
-    private int cursX, cursY;
-    private int subCanvasScale;
-    private boolean running;
+    private static Canvas instance;
 
-    private GameOfLife subCanvas;
     private Timer timer;
+    private int oldX, oldY;
+    private boolean isRunning;
 
-    public Canvas() {
+    private int subCanvasScale;
+    private GameOfLife subCanvas;
+
+    private Canvas() {
         oldX = -1; oldY = -1;
-        running = false;
+        isRunning = false;
 
-        String val = null;
-        while (val == null) {
-            val = JOptionPane.showInputDialog("Type in the desired MxN size of the grid, separated by commas. (Ex.: 15, 15)");
-            if (val == null || val.isEmpty() || val.matches("[a-zA-Z]+")) {
-                JOptionPane.showMessageDialog(this, "Invalid input");
-                val = null;
-            }
+        double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        if (height == 1080) {
+            subCanvasScale = 12;    
+        } else if (height <= 768) {
+            subCanvasScale = 8;
+        } else if (height > 1080) {
+            subCanvasScale = 15;
         }
+        subCanvas = new GameOfLife(120, 75);
 
-        String[] aux = val.trim().split(", *");
-        String m = aux[0].trim(), n = aux[1].trim();
-
-        val = null;
-        while (val == null) {
-            val = JOptionPane.showInputDialog("Type in the desired scale of the grid. (Ex.: 15) \n This will define the number of pixels per cell.");
-            if (val == null || val.isEmpty() || val.matches("[a-zA-Z ]+")) {
-                JOptionPane.showMessageDialog(this, "Invalid input");
-                val = null;
-            }
-        }
-
-        subCanvasScale = Integer.valueOf(val.trim());
-        subCanvas = new GameOfLife(Integer.valueOf(m), Integer.valueOf(n));
-
-        timer = new Timer(500, e -> {
-            if (running) {
-                subCanvas.tick();
-                repaint();
-            }
-            if (subCanvas.updated() <= 0) {
-                running = false;
-                super.setTitle("Conway's Game of Life (Halt)");
-            }
-        });
+        timer = new Timer(500, e -> updateCanvas());
         
         this.setBackground(Color.black);
         this.setJMenuBar(generateMenuBar());
@@ -75,59 +53,93 @@ public class Canvas extends JFrame {
         this.setVisible(true);
     }
 
+    public static Canvas getInstance() {
+        if (instance == null) {
+            instance = new Canvas();
+        }
+        return instance;
+    }
+
     private void setOldCursorCoord(int x, int y) {
         oldX = x; oldY = y;
+    }
+
+    private void startGame() {
+        timer.start();
+        isRunning = true;
+        super.setTitle("Conway's Game of Life (Running)");
+    }
+
+    private void stopGame() {
+        timer.stop();
+        isRunning = false;
+        super.setTitle("Conway's Game of Life");
+    }
+
+    private void resetGame() {
+        if (isRunning) {
+            return;
+        }
+        subCanvas.reset();
+        repaint();
+    }
+
+    private void updateCanvas() {
+        if (isRunning) {
+            subCanvas.tick();
+            repaint();
+        }
+        if (subCanvas.updated() <= 0) {
+            isRunning = false;
+            super.setTitle("Conway's Game of Life (Halt)");
+        }
+    }
+
+    private void askForNewRate() {
+        String val = JOptionPane.showInputDialog("Type in the desired update rate (in milliseconds)");
+        if (val == null || val.isEmpty() || val.matches("[a-zA-Z ]+")) {
+            JOptionPane.showMessageDialog(this, "Invalid input");
+            return;
+        }
+        int rate = Integer.valueOf(val);
+        timer.setDelay(rate);
     }
 
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
-        JMenuItem item = new JMenuItem("Start");
-        item.addActionListener(e -> {
-            timer.start();
-            running = true;
-            super.setTitle("Conway's Game of Life (Running)");
-        });
-        menu.add(item);
-
-        item = new JMenuItem("Stop");
-        item.addActionListener(e -> {
-            timer.stop();
-            running = false;
-            super.setTitle("Conway's Game of Life");
-        });
-        menu.add(item);
-
-        item = new JMenuItem("Reset");
-        item.addActionListener(e -> {
-            if (running) {
-                return;
-            }
-            subCanvas.reset();
-            repaint();
-        });
-        menu.add(item);
-
-        menu.addSeparator();
-        item = new JMenuItem("Exit");
+        menu.setMnemonic(KeyEvent.VK_F);
+        JMenuItem item = new JMenuItem("Exit");
         item.addActionListener(e -> System.exit(0));
         menu.add(item);
         menuBar.add(menu);
 
-        menu = new JMenu("Options");
-        item = new JMenuItem("Update Rate");
-        item.addActionListener(e -> {
-            String val = JOptionPane.showInputDialog("Type in the desired update rate (in milliseconds)");
-            if (val == null || val.isEmpty() || val.matches("[a-zA-Z ]+")) {
-                JOptionPane.showMessageDialog(this, "Invalid input");
-                return;
-            }
-            int rate = Integer.valueOf(val);
-            timer.setDelay(rate);
-        });
+        menu = new JMenu("Game");
+        menu.setMnemonic(KeyEvent.VK_G);
+        item = new JMenuItem("Start");
+        item.addActionListener(e -> startGame());
+        item.setMnemonic(KeyEvent.VK_1);
         menu.add(item);
 
+        item = new JMenuItem("Stop");
+        item.addActionListener(e -> stopGame());
+        item.setMnemonic(KeyEvent.VK_2);
+        menu.add(item);
+
+        item = new JMenuItem("Reset");
+        item.addActionListener(e -> resetGame());
+        item.setMnemonic(KeyEvent.VK_3);
+        menu.add(item);
         menuBar.add(menu);
+
+        menu = new JMenu("Options");
+        menu.setMnemonic(KeyEvent.VK_V);
+        item = new JMenuItem("Change Update Rate");
+        item.addActionListener(e -> askForNewRate());
+        item.setMnemonic(KeyEvent.VK_1);
+        menu.add(item);
+        menuBar.add(menu);
+
         return menuBar;
     }
 
@@ -144,8 +156,6 @@ public class Canvas extends JFrame {
                         g.setColor(Color.BLUE);
                     }
                 }
-                //g.setColor(Color.BLUE);
-                //g.fillRect(cursX * subCanvasScale, cursY * subCanvasScale, subCanvasScale, subCanvasScale);
             }
         };
         canvas.addMouseListener(new MouseAdapter() {
@@ -166,17 +176,10 @@ public class Canvas extends JFrame {
                 if (x == oldX && y == oldY) {
                     return;
                 }
-                setOldCursorCoord(x, y);
                 subCanvas.toggle(x, y);
+                setOldCursorCoord(x, y);
                 repaint();
             }
-
-            // @Override
-            // public void mouseMoved(MouseEvent e) {
-            //     cursX = e.getX() / subCanvasScale;
-            //     cursY = e.getY() / subCanvasScale;
-            //     repaint();
-            // }
         });
         canvas.setPreferredSize(new Dimension(subCanvasScale * subCanvas.getM(), subCanvasScale * subCanvas.getN()));
         return canvas;
