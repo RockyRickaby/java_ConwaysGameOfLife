@@ -39,9 +39,9 @@ public class Canvas extends JFrame {
 
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         if (height == 1080) {
-            subCanvasScale = 12;    
+            subCanvasScale = 10;    
         } else if (height <= 768) {
-            subCanvasScale = 8;
+            subCanvasScale = 7;
         } else if (height > 1080) {
             subCanvasScale = 15;
         }
@@ -50,6 +50,7 @@ public class Canvas extends JFrame {
         timer = new Timer(500, e -> updateCanvas());
         
         this.setBackground(Color.black);
+        this.setResizable(false);
         this.setJMenuBar(generateMenuBar());
         this.setTitle("Conway's Game of Life");
         this.add(generateCanvas());
