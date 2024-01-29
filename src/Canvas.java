@@ -21,7 +21,7 @@ import javax.swing.Timer;
  * the Game of Life itself.
  */
 public class Canvas extends JFrame {
-    private static Canvas instance;
+    private static Canvas instance = null;
 
     private Timer timer;
     private int oldX, oldY;
