@@ -15,7 +15,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-
+/**
+ * The Canvas class serves (mostly) a single purpose: to let the user
+ * paint and to erase some squares on the screen. Its other purpose is managing
+ * the Game of Life itself.
+ */
 public class Canvas extends JFrame {
     private static Canvas instance;
 
@@ -26,6 +30,9 @@ public class Canvas extends JFrame {
     private int subCanvasScale;
     private GameOfLife subCanvas;
 
+    /**
+     * Creates a new blank Canvas.
+     */
     private Canvas() {
         oldX = -1; oldY = -1;
         isRunning = false;
@@ -53,6 +60,11 @@ public class Canvas extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * Returns the Canvas instance. New instances will never
+     * be created.
+     * @return the Canvas instance.
+     */
     public static Canvas getInstance() {
         if (instance == null) {
             instance = new Canvas();
@@ -60,22 +72,37 @@ public class Canvas extends JFrame {
         return instance;
     }
 
+    /**
+     * Sets previous cursor coordinates.
+     * @param x
+     * @param y
+     */
     private void setOldCursorCoord(int x, int y) {
         oldX = x; oldY = y;
     }
 
+    /**
+     * Starts the Game of Life game
+     */
     private void startGame() {
         timer.start();
         isRunning = true;
         super.setTitle("Conway's Game of Life (Running)");
     }
 
+    /**
+     * Stops the Game of Life
+     */
     private void stopGame() {
         timer.stop();
         isRunning = false;
         super.setTitle("Conway's Game of Life");
     }
 
+    /**
+     * Resets the Game of Life. This method will clear both
+     * the main canvas and the subcanvas (the game itself).
+     */
     private void resetGame() {
         if (isRunning) {
             return;
@@ -84,6 +111,9 @@ public class Canvas extends JFrame {
         repaint();
     }
 
+    /**
+     * Updates the Game of Life and the Canvas.
+     */
     private void updateCanvas() {
         if (isRunning) {
             subCanvas.tick();
@@ -95,6 +125,9 @@ public class Canvas extends JFrame {
         }
     }
 
+    /**
+     * Asks the user for a new update rate for the Game of Life.
+     */
     private void askForNewRate() {
         String val = JOptionPane.showInputDialog("Type in the desired update rate (in milliseconds)");
         if (val == null || val.isEmpty() || val.matches("[a-zA-Z ]+")) {
@@ -105,6 +138,10 @@ public class Canvas extends JFrame {
         timer.setDelay(rate);
     }
 
+    /**
+     * Generates this frame's menu bar.
+     * @return the generated menu bar.
+     */
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
@@ -143,6 +180,10 @@ public class Canvas extends JFrame {
         return menuBar;
     }
 
+    /**
+     * Generates this frame's Canvas.
+     * @return the generated Canvas.
+     */
     private JPanel generateCanvas() {
         JPanel canvas = new JPanel() {
             public void paintComponent(Graphics g) {
