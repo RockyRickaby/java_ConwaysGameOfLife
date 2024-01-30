@@ -133,7 +133,10 @@ public class Canvas extends JFrame {
      */
     private void askForNewRate() {
         String val = JOptionPane.showInputDialog("Type in the desired update rate (in milliseconds)");
-        if (val == null || val.isEmpty() || val.matches("[a-zA-Z ]+")) {
+        if (val == null) {
+            return;
+        }
+        if (val.isEmpty() || val.matches("[a-zA-Z ]+")) {
             JOptionPane.showMessageDialog(this, "Invalid input");
             return;
         }
