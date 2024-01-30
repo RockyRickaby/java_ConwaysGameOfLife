@@ -17,8 +17,8 @@ import javax.swing.Timer;
 
 /**
  * The Canvas class serves (mostly) a single purpose: to let the user
- * paint and to erase some squares on the screen. Its other purpose is managing
- * the Game of Life itself.
+ * paint and to erase some squares on the screen. Its other purpose is rendering
+ * Conway's Game of Life.
  */
 public class Canvas extends JFrame {
     private static Canvas instance = null;
@@ -27,7 +27,7 @@ public class Canvas extends JFrame {
     private int oldX, oldY;
     private boolean isRunning;
 
-    private int subCanvasScale;
+    private final int subCanvasScale;
     private GameOfLife subCanvas;
 
     /**
@@ -44,6 +44,8 @@ public class Canvas extends JFrame {
             subCanvasScale = 7;
         } else if (height > 1080) {
             subCanvasScale = 15;
+        } else {
+            subCanvasScale = 8;
         }
         subCanvas = new GameOfLife(120, 75);
 
@@ -195,7 +197,6 @@ public class Canvas extends JFrame {
                         g.fillRect(i * subCanvasScale, j * subCanvasScale, subCanvasScale, subCanvasScale);
                         g.setColor(Color.BLACK);
                         g.draw3DRect(i * subCanvasScale, j * subCanvasScale, subCanvasScale, subCanvasScale, false);
-                        g.setColor(Color.BLUE);
                     }
                 }
             }

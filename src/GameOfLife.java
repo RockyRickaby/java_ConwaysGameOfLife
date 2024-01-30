@@ -85,7 +85,7 @@ public class GameOfLife {
     private int numberOfLiveNeighborsOf(int i, int j) {
         i--; j--;
         int count = 0;
-        for (int rowI = i; rowI < i +  3; rowI++) {
+        for (int rowI = i; rowI < i + 3; rowI++) {
             for (int colJ = j; colJ < j + 3; colJ++) {
                 if (!validIndex(rowI, colJ) || (rowI == (i + 1) && colJ == (j + 1))) {
                     continue;
