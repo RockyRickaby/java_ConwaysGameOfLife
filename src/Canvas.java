@@ -47,7 +47,7 @@ public class Canvas extends JFrame {
         } else {
             subCanvasScale = 8;
         }
-        subCanvas = new GameOfLife(120, 75);
+        subCanvas = new GameOfLife(75, 120);
 
         timer = new Timer(500, e -> updateCanvas());
         
@@ -196,10 +196,14 @@ public class Canvas extends JFrame {
                 int m = subCanvas.getM(), n = subCanvas.getN();
                 for (int i = 0; i < m; i++) {
                     for (int j = 0; j < n; j++) {
-                        g.setColor(subCanvas.currentState(i, j) == 1 ? Color.WHITE : Color.BLACK);
-                        g.fillRect(i * subCanvasScale, j * subCanvasScale, subCanvasScale, subCanvasScale);
+                        int state = subCanvas.currentState(i, j);
+                        if (state == 0) {
+                            continue;
+                        }
+                        g.setColor(Color.WHITE);
+                        g.fillRect(j * subCanvasScale, i * subCanvasScale, subCanvasScale, subCanvasScale);
                         g.setColor(Color.BLACK);
-                        g.draw3DRect(i * subCanvasScale, j * subCanvasScale, subCanvasScale, subCanvasScale, false);
+                        g.drawRect(j * subCanvasScale, i * subCanvasScale,  subCanvasScale, subCanvasScale);
                     }
                 }
             }
@@ -209,7 +213,7 @@ public class Canvas extends JFrame {
             public void mousePressed(MouseEvent e) {
                 int x = e.getX() / subCanvasScale;
                 int y = e.getY() / subCanvasScale;
-                subCanvas.toggle(x, y);
+                subCanvas.toggle(y, x);
                 setOldCursorCoord(x, y);
                 repaint();
             }  
@@ -222,12 +226,12 @@ public class Canvas extends JFrame {
                 if (x == oldX && y == oldY) {
                     return;
                 }
-                subCanvas.toggle(x, y);
+                subCanvas.toggle(y, x);
                 setOldCursorCoord(x, y);
                 repaint();
             }
         });
-        canvas.setPreferredSize(new Dimension(subCanvasScale * subCanvas.getM(), subCanvasScale * subCanvas.getN()));
+        canvas.setPreferredSize(new Dimension(subCanvasScale * subCanvas.getN(), subCanvasScale * subCanvas.getM()));
         return canvas;
     }
 }
