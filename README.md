@@ -1,18 +1,15 @@
-## Getting Started
+# Conway's Game of Life
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+The size of the screen is fixed until I come up with a good implementation
+that can handle arbitrarily-sized screens.
 
-## Folder Structure
+## Building and running
 
-The workspace contains two folders by default, where:
+Run these on the command line and you should be good to go:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+```console
+$ mvn package
+$ java -jar ./target/GmeOfLife-<current version>.jar
+```
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Alternatively, double clicking the jar file should also run the game.
