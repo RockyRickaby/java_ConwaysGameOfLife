@@ -1,6 +1,8 @@
+package com.mauro.gameoflife;
+
 public class GameTest {
     public static void main(String[] args) {
-        GameOfLife game = new GameOfLife(12, 12);
+        GameOfLife game = new GameOfLife(12, 30);
         //game.tick();
         game.toggle(1, 2);
         game.toggle(2, 2);

@@ -1,3 +1,5 @@
+package com.mauro.gameoflife;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

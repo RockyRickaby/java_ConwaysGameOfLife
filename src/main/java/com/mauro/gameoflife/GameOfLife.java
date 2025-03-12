@@ -1,3 +1,4 @@
+package com.mauro.gameoflife;
 /**
  * The GameOfLife class contains all the logic necessary to simulate
  * Conway's Game of Life. The Game of Life grid can have any size (as
